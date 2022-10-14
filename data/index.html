@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>LAB 9 | Lamp</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="http://cdn.rawgit.com/Mikhus/canvas-gauges/gh-pages/download/2.1.7/all/gauge.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+    <header>
+        <img src="https://raw.githubusercontent.com/MicaelaGordillo/IOT_2/main/EjemploST_3/images/logo/myn.png" alt="logo">
+        <h1 style="z-index: 100; background-color:white;">LÁMPARA INTELIGENTE</h1>
+        <div id="contenedor" style="display: grid;position: absolute; top: 10px;right: 0; width: 200px;">
+          <img id="imgPotencia" src="" alt="">
+          <p id="valorPotencia">%RSSI%</p>
+        </div>
+        <script>
+            actualizarPotencia();
+            function actualizarPotencia(){
+                var valor = parseInt(document.getElementById("valorPotencia").innerText);
+                if(valor>=(-40)){
+                    document.getElementById("imgPotencia").src = "https://i.ibb.co/3hwW4kK/wifi.jpg";
+                }else if(valor<(-40)&&valor>=(-50)){
+                    document.getElementById("imgPotencia").src = "https://i.ibb.co/7SmCNzN/wifi2.jpg";
+                }else if(valor<(-50)&&valor>=(-60)){
+                    document.getElementById("imgPotencia").src = "https://i.ibb.co/zJF9dgB/wifi3.jpg";
+                }else if(valor<(-60)){
+                    document.getElementById("imgPotencia").src = "https://i.ibb.co/Sr0VFW3/wifi4.jpg";
+                }
+            }
+            setInterval(function ( ) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("valorPotencia").innerText = this.responseText;
+                        document.getElementById("valorRSSI").innerText = this.responseText;
+                        actualizarPotencia();
+                    }
+                };
+                xhttp.open("GET", "/RSSI", true);
+                xhttp.send();
+            }, 10000 ) ;
+        </script>
+    </header>
+    <div style="height: 120px;"></div>
+
+    <!--Contenido-->
+    <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-left: 52px; margin-right: 52px;">
+        <li class="nav-item">
+            <a class="nav-link active" id="lampara-tab" data-toggle="tab" href="#lampara" role="tab" aria-controls="lampara" aria-selected="true">Lámpara</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent" style="margin-left: 52px; margin-right: 52px;">
+        <div class="tab-pane fade show active" id="lampara" role="tabpanel" aria-labelledby="lampara-tab">
+            <div style="display: grid; grid-template-columns: 50% 50%; margin: 20px 20px;">
+                <!--Encendido y apagado del foco-->
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div>
+                        <center><h2>Encendido y apagado</h2></center>
+                        <div style='display: inline-flex; margin: 0% 10%;'><img value=1 id='foco-imagen' src='intensidad_foco/intensidad5.png'  width='200px'><input id='switch-foco' type='image' src='http://esploradores.com/Practicas_html/apagar_300x88.png' style='display:block; margin:auto' width='40%' onclick="cambiarFoco()"></div>         
+                        <input type="range" style='display: none;' id="estado-foco" name="estado-foco" value="0">
+                        <script>
+                            function cambiarFoco(){
+                                if (document.getElementById('estado-foco').value == 0){
+                                    document.getElementById('foco-imagen').src = 'intensidad_foco/intensidad1.png';
+                                    document.getElementById('estado-foco').value = 1;
+                                    document.getElementById('switch-foco').src ='http://esploradores.com/Practicas_html/encender_300x88.png';
+                                } else {
+                                    document.getElementById('foco-imagen').src = 'intensidad_foco/intensidad5.png';
+                                    document.getElementById('estado-foco').value = 0;
+                                    document.getElementById('switch-foco').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
+                                }
+                                var xhttp = new XMLHttpRequest();
+                                xhttp.onreadystatechange = function() {
+                                    if (this.readyState == 4 && this.status == 200) {
+                                    console.log("todo bien");
+                                    }
+                                };
+                                xhttp.open("GET", "/FocoEstado"+document.getElementById('estado-foco').value, true);
+                                xhttp.send();
+                            }
+                        </script>
+                    </div>
+                </div>
+                <!--Intensidad del foco con PWM-->
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div>
+                        <center>
+                            <h2>Control de intensidad</h2>
+                            <form action="/SLIDER" method="post">
+                                Slider:<br>
+                                <input type="range" id="pwmInput" name="pwmValue" min="0" max="1023" value="500" onchange="updateTextInput(this.value);" >
+                                <input type="number" id="textInput" onchange="updateTextInput(this.value);" value="500" style="width:50px">
+                                <br><button type="submit" value="Submit">Enviar</button>
+                            </form>
+                        </center>
+                        <script>
+                            function updateTextInput(val) {
+                                console.log(val);
+                                document.getElementById('pwmInput').value = val; 
+                                document.getElementById('textInput').value = val; 
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            Mundo
+        </div>
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+            Cruel
+        </div>
+    </div>
+    
+    <!--Informacion-->
+    <div>
+        <center>
+            <h1>Informacion de la conexión </h1> 
+            <div style='width: 90vw; transition: 1s;' class='ampliacion'>
+                <table class="styled-table">
+                    <thead>
+                        <tr><th style=' padding: 20px;'>IP Local</th><th style=' padding: 20px; '>Host Name</th><th style=' padding: 20px; '>Status</th><th style=' padding: 20px; '>SSID</th><th style=' padding: 20px; '>PSK</th><th style=' padding: 20px; '>BSSID</th><th style=' padding: 20px; '>RSSI</th></tr>
+                    </thead>
+                    <tr>
+                        <td style='padding: 20px;text-align: center;'class='changecolor'>%IP%</td>
+                        <td style='padding: 20px;text-align: center;'class='changecolor'>%HOSTNAME%</td>
+                        <td style='padding: 20px;text-align: center;'class='changecolor'>%STATUS%</td>
+                        <td style='padding: 20px;text-align: center;'class='changecolor'>%SSID%</td>
+                        <td style='padding: 20px;text-align: center;'class='changecolor'>%PSK%</td>
+                        <td style='padding: 20px;text-align: center;'class='changecolor'>%BSSID%</td>
+                        <td style='padding: 20px;text-align: center;'class='changecolor' id="valorRSSI">%RSSI%</td> 
+                    </tr>
+                </table>
+            </div>
+        </center>
+    </div>
+    <br><br>
+    <img id="piplup" src="https://raw.githubusercontent.com/MicaelaGordillo/IOT_2/main/EjemploST_3/images/logo/piplup.png" alt="">
+    <footer>@Copyright MYN 2022- All Right Reserved.</footer>
+    <hr>
+    <!-- Fotitos -->
+    <center><h2>Integrantes:</h2></center> 
+    <div style="display: flex;">
+        <!-- Yamil -->
+        <div class="profile-card yamil" style="margin: 0 auto;">
+            <div class="img">
+                <img src="https://raw.githubusercontent.com/MicaelaGordillo/IOT_2/main/EjemploST_3/images/fotos/yamilPFP.jpeg">
+            </div>
+            <div class="caption">
+                <h3>Yamil Barrientos</h3>
+                <p>Estudiante</p>
+            </div>
+        </div>
+        <!-- Mica -->
+        <div class="profile-card mica" style="margin: 0 auto;">
+            <div class="img">
+                <img src="https://raw.githubusercontent.com/MicaelaGordillo/IOT_2/main/EjemploST_3/images/fotos/micaPFP.jpeg">
+            </div>
+            <div class="caption">
+                <h3>Micaela Gordillo</h3>
+                <p>Estudiante</p>
+            </div>
+        </div>
+        <!-- Nao -->
+        <div class="profile-card" style="margin: 0 auto;">
+            <div class="img">
+                <img src="https://raw.githubusercontent.com/MicaelaGordillo/IOT_2/main/EjemploST_3/images/fotos/IMG_20210715_162333.jpg">
+            </div>
+            <div class="caption">
+                <h3>Naomi Tacachira</h3>
+                <p>Estudiante</p>
+            </div>
+        </div>
+    </div>
+    <!-- Espacios -->
+    <br><br><br><br>
+
+    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
