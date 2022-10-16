@@ -19,6 +19,36 @@ String pwmValue;
 
 AsyncWebServer server(80);
 
+
+String getRSSI(){
+  return String(WiFi.RSSI());
+}
+String processor(const String& var){
+    Serial.print(var+" : ");
+    if (var == "IP"){
+      return String(WiFi.localIP().toString().c_str());
+    }
+    else if (var == "HOSTNAME"){
+      return String(WiFi.getHostname());
+    }
+    else if (var == "STATUS"){
+      return String(WiFi.status());
+    }
+    else if (var == "SSID"){
+      return String(WiFi.SSID().c_str());
+    }
+    else if (var == "PSK"){
+      return String(WiFi.psk().c_str());
+    }
+    else if (var == "BSSID"){
+      return String(WiFi.BSSIDstr().c_str());
+    }
+    else if (var == "RSSI"){
+      return String(WiFi.RSSI());
+    }
+}
+
+
 void setup(){
   // Serial port for debugging purposes
   Serial.begin(115200);
@@ -39,11 +69,18 @@ void setup(){
   
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html",String(), false);
+    request->send(SPIFFS, "/index.html",String(), false, processor);
   });
   server.on("/index.css", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.css", "text/css");
-  });      
+  });
+
+  server.serveStatic("/", SPIFFS, "/");
+  
+  // Ruta para poner el GPIO alto
+  server.on("/RSSI", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain",getRSSI().c_str());
+  });
 
   //Definimos el foco como salida
   pinMode(foco, OUTPUT); //Inicializamos el foco como salida
@@ -68,10 +105,12 @@ void setup(){
     Serial.println("Estado foco: encendido\t");
     ledcWrite(PWM1_Ch, 1023);
   });
-
+ 
   // Start server
   server.begin();
 }
+
+
 void loop(){
   dato=1;
 }
