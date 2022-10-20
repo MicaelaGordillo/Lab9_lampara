@@ -55,15 +55,21 @@
             <a class="nav-link active" id="lampara-tab" data-toggle="tab" href="#lampara" role="tab" aria-controls="lampara" aria-selected="true">Lámpara</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+            <a class="nav-link" id="pwm-tab" data-toggle="tab" href="#pwm" role="tab" aria-controls="pwm" aria-selected="false">PWM</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+            <a class="nav-link" id="sensorLDR-tab" data-toggle="tab" href="#sensorLDR" role="tab" aria-controls="sensorLDR" aria-selected="false">Sensor LDR</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="horario-tab" data-toggle="tab" href="#horario" role="tab" aria-controls="horario" aria-selected="false">Horario</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="sensorPIR-tab" data-toggle="tab" href="#sensorPIR" role="tab" aria-controls="sensorPIR" aria-selected="false">Sensor PIR</a>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent" style="margin-left: 52px; margin-right: 52px;">
         <div class="tab-pane fade show active" id="lampara" role="tabpanel" aria-labelledby="lampara-tab">
-            <div style="display: grid; grid-template-columns: 50% 50%; margin: 20px 20px;">
+            <div style="display: flex; justify-content: center; align-items: center; margin: 20px 20px;">
                 <!--Encendido y apagado del foco-->
                 <div style="display: flex; align-items: center; justify-content: center;">
                     <div>
@@ -93,6 +99,10 @@
                         </script>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="pwm" role="tabpanel" aria-labelledby="pwm-tab">
+            <div style="display: flex; justify-content: center; align-items: center; margin: 40px 20px;">
                 <!--Intensidad del foco con PWM-->
                 <div style="display: flex; align-items: center; justify-content: center;">
                     <div>
@@ -116,11 +126,95 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            Mundo
+        <div class="tab-pane fade" id="sensorLDR" role="tabpanel" aria-labelledby="sensorLDR-tab">
+            <div style="display: flex; justify-content: center; align-items: center; margin: 20px 20px;">
+                <!--Encendido y apagado del foco-->
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div>
+                        <center><h2>Encendido y apagado</h2></center>
+                        <div style='display: inline-flex; margin: 0% 10%;'><img value=1 id='foco-imagen2' src='https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png'  width='200px'><input id='switch-foco2' type='image' src='http://esploradores.com/Practicas_html/apagar_300x88.png' style='display:block; margin:auto' width='40%' onclick="cambiarFoco2()"></div>         
+                        <input type="range" style='display: none;' id="estado-foco2" name="estado-foco2" value="0">
+                        <script>
+                            function cambiarFoco2(){
+                                if (document.getElementById('estado-foco2').value == 0){
+                                    document.getElementById('foco-imagen2').src = 'https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad1.png';
+                                    document.getElementById('estado-foco2').value = 1;
+                                    document.getElementById('switch-foco2').src ='http://esploradores.com/Practicas_html/encender_300x88.png';
+                                } else {
+                                    document.getElementById('foco-imagen2').src = 'https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png';
+                                    document.getElementById('estado-foco2').value = 0;
+                                    document.getElementById('switch-foco2').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
+                                }
+                                var xhttp = new XMLHttpRequest();
+                                xhttp.onreadystatechange = function() {
+                                    if (this.readyState == 4 && this.status == 200) {
+                                    console.log("todo bien");
+                                    }
+                                };
+                                xhttp.open("GET", "/FocoEstado"+document.getElementById('estado-foco2').value, true);
+                                xhttp.send();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-            Cruel
+        <div class="tab-pane fade" id="horario" role="tabpanel" aria-labelledby="horario-tab">
+            l
+        </div>
+        <div class="tab-pane fade" id="sensorPIR" role="tabpanel" aria-labelledby="sensorPIR-tab">
+            <div style="display: grid; grid-template-columns: 50% 50%; margin: 20px 20px;">
+                <!--Encendido y apagado del foco-->
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div>
+                        <center><h2>Encendido y apagado</h2></center>
+                        <div style='display: inline-flex; margin: 0% 10%;'><img value=1 id='foco-imagen3' src='https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png'  width='200px'><input id='switch-foco3' type='image' src='http://esploradores.com/Practicas_html/apagar_300x88.png' style='display:block; margin:auto' width='40%' onclick="cambiarFoco3()"></div>         
+                        <input type="range" style='display: none;' id="estado-foco3" name="estado-foco3" value="0">
+                        <script>
+                            function cambiarFoco3(){
+                                if (document.getElementById('estado-foco3').value == 0){
+                                    document.getElementById('foco-imagen3').src = 'https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad1.png';
+                                    document.getElementById('estado-foco3').value = 1;
+                                    document.getElementById('switch-foco3').src ='http://esploradores.com/Practicas_html/encender_300x88.png';
+                                } else {
+                                    document.getElementById('foco-imagen3').src = 'https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png';
+                                    document.getElementById('estado-foco3').value = 0;
+                                    document.getElementById('switch-foco3').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
+                                }
+                                var xhttp = new XMLHttpRequest();
+                                xhttp.onreadystatechange = function() {
+                                    if (this.readyState == 4 && this.status == 200) {
+                                    console.log("todo bien");
+                                    }
+                                };
+                                xhttp.open("GET", "/FocoEstado"+document.getElementById('estado-foco3').value, true);
+                                xhttp.send();
+                            }
+                        </script>
+                    </div>
+                </div>
+                <!--Intensidad del foco con PWM-->
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div>
+                        <center>
+                            <h2>Umbral de porcentaje</h2>
+                            <form action="/SLIDER2" method="post">
+                                Slider:<br>
+                                <input type="range" id="pwmInput2" name="pwmValue2" min="0" max="1000" value="500" onchange="updateTextInput2(this.value);" >
+                                <input type="number" id="textInput2" onchange="updateTextInput2(this.value);" value="500" style="width:50px">
+                                <br><button type="submit" value="Submit">Enviar</button>
+                            </form>
+                        </center>
+                        <script>
+                            function updateTextInput2(val) {
+                                console.log(val);
+                                document.getElementById('pwmInput2').value = val; 
+                                document.getElementById('textInput2').value = val; 
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
