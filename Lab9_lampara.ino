@@ -14,6 +14,8 @@
 //Declarar componentes
 //Foco
 int foco = 22;
+//Led
+int led = 21;
 int estadoFoco = LOW; //Para guardar el estado del Foco
 //Sensor LDR
 boolean flagLDR = false;
@@ -101,18 +103,20 @@ void setup(){
   pinMode(foco, OUTPUT); //Inicializamos el foco como salida
   digitalWrite(foco, LOW); //Dejamos inicialmente el foco apagado
   
-  ledcAttachPin(foco, PWM1_Ch);
+  ledcAttachPin(led, PWM1_Ch);
   ledcSetup(PWM1_Ch, PWM1_Freq, PWM1_Res);
 
   //Primera pestaña
   //Encendido y apagado
   server.on("/FocoEstado0", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.print("Estado foco: apagado\t");
-    ledcWrite(PWM1_Ch, 0);
+    //ledcWrite(PWM1_Ch, 0);
+    digitalWrite(foco, LOW);
   });
   server.on("/FocoEstado1", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Estado foco: encendido\t");
-    ledcWrite(PWM1_Ch, 1023);
+    //ledcWrite(PWM1_Ch, 1023);
+    digitalWrite(foco, HIGH);
   });
 
   //Segunda pestaña
