@@ -78,5 +78,6 @@ function horario(){
     } else {
         document.getElementById('flagHorario').value = 1;
         auxHorario = true;
+        
     }
 }
