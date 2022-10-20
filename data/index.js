@@ -22,9 +22,6 @@ var clock = setInterval(
       hour.textContent = hr;
       minute.textContent = min;
       seconds.textContent = sec;
-
-
-
     },1000
 );
 
@@ -65,20 +62,21 @@ function cambiarLed(color){
     xhttp42.open("GET", "/FocoEstado"+document.getElementById('estado-foco3').value, true);
     xhttp42.send();
 
-    if (document.getElementById('#flagHorario').value == 1){
-        document.getElementById('#flagHorario').value = 0;
+    if (document.getElementById('flagHorario').value == 1){
+        document.getElementById('flagHorario').value = 0;
         auxHorario = false;
-        $("#establecerHorario").click();
+        document.getElementById("establecerHorario").click();
     }
 }
 
 var auxHorario = true;
 function horario(){
+    console.log("hola")
     if(auxHorario){
-        document.getElementById('#flagHorario').value = 0;
+        document.getElementById('flagHorario').value = 0;
         auxHorario = false;
     } else {
-        document.getElementById('#flagHorario').value = 1;
+        document.getElementById('flagHorario').value = 1;
         auxHorario = true;
     }
 }
