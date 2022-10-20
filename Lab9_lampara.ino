@@ -6,11 +6,22 @@
 //Incluir el archivo config.h
 #include "config.h"
 
+//Sensor LDR
+#define ADC_VREF_mV    3300.0 // 3.3v en millivoltios
+#define ADC_RESOLUTION 4096.0
+#define LIGHT_SENSOR_PIN       36 // ESP32 pin GIOP36 (ADC0) conectado al LDR
+
 //Declarar componentes
+//Foco
 int foco = 22;
 int estadoFoco = LOW; //Para guardar el estado del Foco
-boolean dato;
+//Sensor LDR
+boolean flagLDR = false;
+int datoADC;
+float porcentaje=0.0;
+float factor=100.0/ADC_RESOLUTION;
 
+//PWM
 #define PWM1_Ch    0
 #define PWM1_Res   8
 #define PWM1_Freq  1000
@@ -18,6 +29,10 @@ boolean dato;
 String pwmValue;
 
 AsyncWebServer server(80);
+
+//Horario
+String hEncendido, mEncendido, hApagado, mApagado, aux;
+bool flagHorario = false;
 
 
 String getRSSI(){
@@ -89,14 +104,8 @@ void setup(){
   ledcAttachPin(foco, PWM1_Ch);
   ledcSetup(PWM1_Ch, PWM1_Freq, PWM1_Res);
 
-  server.on("/SLIDER", HTTP_POST, [](AsyncWebServerRequest *request){
-    pwmValue = request->arg("pwmValue");
-    Serial.print("PWM:\t");
-    Serial.println(pwmValue);
-    request->redirect("/");
-    ledcWrite(PWM1_Ch, pwmValue.toInt());
-  });
-
+  //Primera pestaña
+  //Encendido y apagado
   server.on("/FocoEstado0", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.print("Estado foco: apagado\t");
     ledcWrite(PWM1_Ch, 0);
@@ -105,6 +114,52 @@ void setup(){
     Serial.println("Estado foco: encendido\t");
     ledcWrite(PWM1_Ch, 1023);
   });
+
+  //Segunda pestaña
+  //Intensidad de la luz
+  server.on("/SLIDER", HTTP_POST, [](AsyncWebServerRequest *request){
+    pwmValue = request->arg("pwmValue");
+    Serial.print("PWM:\t");
+    Serial.println(pwmValue);
+    request->redirect("/");
+    ledcWrite(PWM1_Ch, pwmValue.toInt());
+  });
+  
+  //Tercera pestaña
+  //Sensor LDR
+  server.on("/EstadoSensorLDR0", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.print("Sensor LDR: Activado\t");
+    flagLDR = true;
+  });
+  server.on("/EstadoSensorLDR1", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.println("Sensor LDR: Activado\t");
+    flagLDR = false;
+  });
+
+  //Cuarta pestaña
+  //Horario
+  server.on("/HORARIO", HTTP_GET, [](AsyncWebServerRequest *request){
+    hEncendido = request->arg("horaEncendido");
+    mEncendido = request->arg("minutoEncendido");
+    hApagado = request->arg("horaApagado");
+    mApagado = request->arg("minutoApagado");
+    aux = request->arg("auxHorario");
+    Serial.print("Hora encendido ->");
+    Serial print(hEncendido);
+    Serial.print(":");
+    Serial.print(mEncendido);
+    Serial.print("\t");
+    Serial.print("Hora apagado ->");
+    Serial print(hApagado);
+    Serial.print(":");
+    Serial.println(mApagado);
+    request->redirect("/");
+    if(aux.toInt() == 0){
+      flagHorario = false;    
+    } else {
+      flagHorario = true;
+    }
+  });
  
   // Start server
   server.begin();
@@ -112,5 +167,40 @@ void setup(){
 
 
 void loop(){
-  dato=1;
+  if(flagLDR){
+    // lectura del dato analogico (valor entre 0 y 4095)
+    datoADC = analogRead(LIGHT_SENSOR_PIN);
+    porcentaje=factor*datoADC;
+    Serial.print("Valor Analogico = ");
+    Serial.print(datoADC);   
+    Serial.print("  Porcentaje = ");
+    Serial.print(porcentaje);  
+    if (datoADC < 40) {
+      Serial.println("%  => Oscuro");
+      ledcWrite(PWM1_Ch, 1023);
+    } else if (datoADC < 800) {
+      Serial.println("% => Tenue");
+      ledcWrite(PWM1_Ch, 768);
+    } else if (datoADC < 2000) {
+      Serial.println("% => Claro");
+      ledcWrite(PWM1_Ch, 512);
+    } else if (datoADC < 3200) {
+      Serial.println("% => Luminoso");
+      ledcWrite(PWM1_Ch, 256);
+    } else {
+      Serial.println("% => Muy Luminoso");
+      ledcWrite(PWM1_Ch, 0);
+    }
+    delay(500);
+  } else if (flagHorario){
+    if(hour()){
+      if(minute()){
+        
+      } else {
+        
+      }
+    } else {
+      
+    }
+  }
 }

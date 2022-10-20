@@ -54,20 +54,21 @@
     <!--Contenido-->
     <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-left: 52px; margin-right: 52px;">
         <li class="nav-item">
-            <a class="nav-link active" id="lampara-tab" data-toggle="tab" href="#lampara" role="tab" aria-controls="lampara" aria-selected="true">Lámpara</a>
+            <a class="nav-link active" id="lampara-tab" data-toggle="tab" href="#lampara" role="tab" aria-controls="lampara" aria-selected="true" onclick="cambiarLed('red')">Lámpara</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="pwm-tab" data-toggle="tab" href="#pwm" role="tab" aria-controls="pwm" aria-selected="false">PWM</a>
+            <a class="nav-link" id="pwm-tab" data-toggle="tab" href="#pwm" role="tab" aria-controls="pwm" aria-selected="false" onclick="cambiarLed('yellow')">PWM</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="sensorLDR-tab" data-toggle="tab" href="#sensorLDR" role="tab" aria-controls="sensorLDR" aria-selected="false">Sensor LDR</a>
+            <a class="nav-link" id="sensorLDR-tab" data-toggle="tab" href="#sensorLDR" role="tab" aria-controls="sensorLDR" aria-selected="false" onclick="cambiarLed('green')">Sensor LDR</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="horario-tab" data-toggle="tab" href="#horario" role="tab" aria-controls="horario" aria-selected="false">Horario</a>
+            <a class="nav-link" id="horario-tab" data-toggle="tab" href="#horario" role="tab" aria-controls="horario" aria-selected="false" onclick="cambiarLed('cyan')">Horario</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="sensorPIR-tab" data-toggle="tab" href="#sensorPIR" role="tab" aria-controls="sensorPIR" aria-selected="false">Sensor PIR</a>
+            <a class="nav-link" id="sensorPIR-tab" data-toggle="tab" href="#sensorPIR" role="tab" aria-controls="sensorPIR" aria-selected="false" onclick="cambiarLed('purple')">Sensor PIR</a>
         </li>
+        <img src="https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/led_colores/red_led.png" id="led_status" alt="">
     </ul>
     <div class="tab-content" id="myTabContent" style="margin-left: 52px; margin-right: 52px;">
         <div class="tab-pane fade show active" id="lampara" role="tabpanel" aria-labelledby="lampara-tab">
@@ -89,14 +90,14 @@
                                     document.getElementById('estado-foco').value = 0;
                                     document.getElementById('switch-foco').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
                                 }
-                                var xhttp = new XMLHttpRequest();
-                                xhttp.onreadystatechange = function() {
+                                var xhttp1 = new XMLHttpRequest();
+                                xhttp1.onreadystatechange = function() {
                                     if (this.readyState == 4 && this.status == 200) {
                                     console.log("todo bien");
                                     }
                                 };
-                                xhttp.open("GET", "/FocoEstado"+document.getElementById('estado-foco').value, true);
-                                xhttp.send();
+                                xhttp1.open("GET", "/FocoEstado"+document.getElementById('estado-foco').value, true);
+                                xhttp1.send();
                             }
                         </script>
                     </div>
@@ -133,7 +134,7 @@
                 <!--Encendido y apagado del foco-->
                 <div style="display: flex; align-items: center; justify-content: center;">
                     <div>
-                        <center><h2>Encendido y apagado</h2></center>
+                        <center><h2>Activado y desactivado</h2></center>
                         <div style='display: inline-flex; margin: 0% 10%;'><img value=1 id='foco-imagen2' src='https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png'  width='200px'><input id='switch-foco2' type='image' src='http://esploradores.com/Practicas_html/apagar_300x88.png' style='display:block; margin:auto' width='40%' onclick="cambiarFoco2()"></div>         
                         <input type="range" style='display: none;' id="estado-foco2" name="estado-foco2" value="0">
                         <script>
@@ -147,14 +148,14 @@
                                     document.getElementById('estado-foco2').value = 0;
                                     document.getElementById('switch-foco2').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
                                 }
-                                var xhttp = new XMLHttpRequest();
-                                xhttp.onreadystatechange = function() {
+                                var xhttp2 = new XMLHttpRequest();
+                                xhttp2.onreadystatechange = function() {
                                     if (this.readyState == 4 && this.status == 200) {
                                     console.log("todo bien");
                                     }
                                 };
-                                xhttp.open("GET", "/FocoEstado"+document.getElementById('estado-foco2').value, true);
-                                xhttp.send();
+                                xhttp2.open("GET", "/EstadoSensorLDR"+document.getElementById('estado-foco2').value, true);
+                                xhttp2.send();
                             }
                         </script>
                     </div>
@@ -170,12 +171,16 @@
                 <div id="seconds">00</div>
             </div>
             <div id="contenedor_horario" style="display: inline-grid; margin-left: 45%; margin-bottom: 100px;">
-                <label for="horaEncendido">Hora de encendido</label>
-                <input type="text" name="" id="horaEncendido">
-                <label for="horaApagado">Hora de apagado</label>
-                <input type="text" name="" id="horaApagado">
-                <br>
-                <button>Establecer horario</button>
+                <form action="/HORARIO" method="post">
+                    <label for="horaEncendido">Hora de encendido</label><br>
+                    <input type="number" id="horaEncendido" name="horaEncendido" min="0" max="23" value="18">&nbsp:
+                    <input type="number" id="minutoEncendido" name="minutoEncendido" min="0" max="60" value="30">
+                    <br><label for="horaApagado">Hora de apagado</label><br>
+                    <input type="number" id="horaApagado" name="horaApagado" min="0" max="23" value="7">&nbsp:
+                    <input type="number" id="minutoApagado" name="minutoApagado" min="0" max="59" value="30">
+                    <input type="number" id="flagHorario" name="flagHorario" min="0" max="10" value="1" style="display: none;"><br>
+                    <br><button id="establecerHorario" type="submit" value="Submit" onclick="horario()">Establecer horario</button>
+                </form>
             </div>
         </div>
         <div class="tab-pane fade" id="sensorPIR" role="tabpanel" aria-labelledby="sensorPIR-tab">
@@ -197,14 +202,14 @@
                                     document.getElementById('estado-foco3').value = 0;
                                     document.getElementById('switch-foco3').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
                                 }
-                                var xhttp = new XMLHttpRequest();
-                                xhttp.onreadystatechange = function() {
+                                var xhttp4 = new XMLHttpRequest();
+                                xhttp4.onreadystatechange = function() {
                                     if (this.readyState == 4 && this.status == 200) {
                                     console.log("todo bien");
                                     }
                                 };
-                                xhttp.open("GET", "/FocoEstado"+document.getElementById('estado-foco3').value, true);
-                                xhttp.send();
+                                xhttp4.open("GET", "/FocoEstado"+document.getElementById('estado-foco3').value, true);
+                                xhttp4.send();
                             }
                         </script>
                     </div>
@@ -233,7 +238,7 @@
             </div>
         </div>
     </div>
-    
+
     <!--Informacion-->
     <div>
         <center>
