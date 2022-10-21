@@ -1,83 +1,109 @@
-var hour = document.getElementById("hour");
-var minute = document.getElementById("minute");
-var seconds = document.getElementById("seconds");
-
-var clock = setInterval(
-    function time(){
-      var date_now = new Date();
-      var hr = date_now.getHours();
-      var min = date_now.getMinutes();
-      var sec = date_now.getSeconds();
-      
-      if(hr < 10){
-          hr = "0" + hr;
-      } 
-      if(min < 10){
-          min = "0" + min;
-      } 
-      if(sec < 10){
-          sec = "0" + sec;
-      }
-
-      hour.textContent = hr;
-      minute.textContent = min;
-      seconds.textContent = sec;
-    },1000
-);
-
-function cambiarLed(color){
-    var led = document.getElementById("led_status");
-    led.src="https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/led_colores/"+color+"_led.png";
-    document.getElementById('foco-imagen').src = 'https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png';
-    document.getElementById('estado-foco').value = 0;
-    document.getElementById('switch-foco').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';   
-    var xhttp12 = new XMLHttpRequest();
-    xhttp12.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-        console.log("todo bien");
-        }
-    };
-    xhttp12.open("GET", "/FocoEstado"+document.getElementById('estado-foco').value, true);
-    xhttp12.send(); 
-    document.getElementById('foco-imagen2').src = 'https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png';
-    document.getElementById('estado-foco2').value = 0;
-    document.getElementById('switch-foco2').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
-    var xhttp22 = new XMLHttpRequest();
-    xhttp22.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-        console.log("todo bien");
-        }
-    };
-    xhttp22.open("GET", "/EstadoSensorLDR"+document.getElementById('estado-foco2').value, true);
-    xhttp22.send();
-    document.getElementById('foco-imagen3').src = 'https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png';
-    document.getElementById('estado-foco3').value = 0;
-    document.getElementById('switch-foco3').src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
-    var xhttp42 = new XMLHttpRequest();
-    xhttp42.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-        console.log("todo bien");
-        }
-    };
-    xhttp42.open("GET", "/FocoEstado"+document.getElementById('estado-foco3').value, true);
-    xhttp42.send();
-
-    if (document.getElementById('flagHorario').value == 1){
-        document.getElementById('flagHorario').value = 0;
-        auxHorario = false;
-        document.getElementById("establecerHorario").click();
+/*Función para cambiar la imagen en base a la conexión WiFi*/
+function actualizarPotencia(){
+    var valor = parseInt(document.getElementById("valorPotencia").innerText);
+    if (valor >= (-40)) {
+        document.getElementById("imgPotencia").src = "https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_wifi/wifi4.png";
+    } else if (valor <(-40) && valor >= (-50)) {
+        document.getElementById("imgPotencia").src = "https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_wifi/wifi3.png";
+    } else if (valor < (-50) && valor >= (-60)){
+        document.getElementById("imgPotencia").src = "https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_wifi/wifi2.png";
+    } else if (valor < (-60)){
+        document.getElementById("imgPotencia").src = "https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_wifi/wifi1.png";
     }
 }
+/*Función para pedir el valor de la conexión WiFi - cada 10 segundos*/
+setInterval(function ( ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("valorPotencia").innerText = this.responseText;
+            document.getElementById("valorRSSI").innerText = this.responseText;
+            actualizarPotencia();
+        }
+    };
+    xhttp.open("GET", "/RSSI", true);
+    xhttp.send();
+}, 10000);
 
-var auxHorario = true;
-function horario(){
-    console.log("hola")
-    if(auxHorario){
-        document.getElementById('flagHorario').value = 0;
-        auxHorario = false;
+apagarFoco(); /*Llama a la función apagarFoco()*/
+
+/*Funcion para apagar el foco*/
+function apagarFoco (){
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "/FocoEstado0", true);
+    xhttp.send();
+}
+
+/*Primera pestaña*/
+/*Funcion que permite cambiar los iconos*/
+function cambiarIconos(idValor, idImagen, idSwitch, ruta){
+    if (document.getElementById(idValor).value == 0){
+        document.getElementById(idImagen).src = 'https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_foco/intensidad1.png';
+        document.getElementById(idValor).value = 1;
+        document.getElementById(idSwitch).src ='http://esploradores.com/Practicas_html/encender_300x88.png';
     } else {
-        document.getElementById('flagHorario').value = 1;
-        auxHorario = true;
-        
+        document.getElementById(idImagen).src = 'https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_foco/intensidad5.png';
+        document.getElementById(idValor).value = 0;
+        document.getElementById(idSwitch).src ='http://esploradores.com/Practicas_html/apagar_300x88.png';
     }
+    var xhttpCambio = new XMLHttpRequest();
+    xhttpCambio.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        console.log("todo bien");
+        }
+    };
+    xhttpCambio.open("GET", "/"+ruta+document.getElementById(idValor).value, true);
+    xhttpCambio.send();
 }
+
+/*Segunda pestaña*/
+/*Función para actualizar los valores en base al slider o input*/
+function updateTextInput(val, pwmInput, textInput) {
+    document.getElementById(pwmInput).value = val; 
+    document.getElementById(textInput).value = val; 
+}
+
+/*Tercera pestaña*/
+/*Gráfica para el sensor LDR*/
+var sensorLDR = new Highcharts.Chart({
+    chart:{ 
+        renderTo:'sensor-LDR' 
+    },
+    title: { 
+        text: 'Sensor LDR' 
+    },
+    series: [{
+      showInLegend: false,
+      data: []
+    }],
+    plotOptions: {
+      line: { animation: false,
+        dataLabels: { enabled: true }
+      },
+      series: { color: '#18009c' }
+    },
+    xAxis: {
+      type: 'datetime',
+      dateTimeLabelFormats: { second:'%S' }
+    },
+    yAxis: {
+      title: { text: 'Datos del Sensor LDR' }
+    },
+    credits: { enabled: false }
+});
+/*Función para pedir el valor del sensor LDR cada 1 segundo*/
+setInterval(function () {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var x = (new Date()).getTime(), y = parseFloat(this.responseText);
+            if(sensorLDR.series[0].data.length > 40) {
+                sensorLDR.series[0].addPoint([x, y], true, true, true);
+            } else {
+                sensorLDR.series[0].addPoint([x, y], true, false, true);
+            }
+        }
+    };
+    xhttp.open("GET", "/SensorLDR", true);
+    xhttp.send();
+}, 1000 );

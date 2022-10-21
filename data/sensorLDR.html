@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
   </head>
   <body>
     <!--Titulo y conexión WiFi-->
@@ -24,13 +25,13 @@
     <!--Barra de navegación-->
     <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-left: 52px; margin-right: 52px;">
         <li class="nav-item">
-            <a class="nav-link active" href="#" target="showPage">Lámpara</a>
+            <a class="nav-link" href="index.html">Lámpara</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="pwm.html">PWM</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="sensorLDR.html">Sensor LDR</a>
+            <a class="nav-link active" href="#">Sensor LDR</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="horario.html">Horario</a>
@@ -38,25 +39,29 @@
         <li class="nav-item">
             <a class="nav-link" href="sensorPIR.html">Sensor PIR</a>
         </li>
-        <img src="https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/led_colores/red_led.png" id="led_status" alt="">
+        <img src="https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/led_colores/green_led.png" id="led_status" alt="">
     </ul>
     <!--Contenido-->
     <div style="display: flex; justify-content: center; align-items: center; margin: 20px 20px;">
       <!--Encendido y apagado del foco-->
       <div style="display: flex; align-items: center; justify-content: center;">
-          <div>
-              <center><h2>Encendido y apagado</h2></center>
-              <div style='display: inline-flex; margin: 0% 10%;'><img value=1 id='foco-imagen' src='https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_foco/intensidad5.png'  width='200px'><input id='switch-foco' type='image' src='http://esploradores.com/Practicas_html/apagar_300x88.png' style='display:block; margin:auto' width='40%' onclick="cambiarIconos('estado-foco', 'foco-imagen', 'switch-foco', 'FocoEstado')"></div>         
-              <input type="range" style='display: none;' id="estado-foco" name="estado-foco" value="0">
-          </div>
+        <div>
+          <center><h2>Activado y desactivado</h2></center>
+          <div style='display: inline-flex; margin: 0% 10%;'><img value=1 id='foco-imagen2' src='https://raw.githubusercontent.com/MicaelaGordillo/Lab9_lampara/main/data/intensidad_foco/intensidad5.png'  width='200px'><input id='switch-foco2' type='image' src='http://esploradores.com/Practicas_html/apagar_300x88.png' style='display:block; margin:auto' width='40%' onclick="cambiarIconos('estado-foco2', 'foco-imagen2', 'switch-foco2', 'EstadoSensorLDR')"></div>         
+          <input type="range" style='display: none;' id="estado-foco2" name="estado-foco2" value="0">
+        </div>
       </div>
+    </div>
+    <!--Gráfica-->
+    <div style="margin: 20px auto; min-width: 310px; max-width: 800px;">
+      <div id="sensor-LDR" class="container"></div>
     </div>
 
     <!--Tabla de información de la conexión-->
     <div>
-        <center>
-        <h1>Información de la conexión</h1> 
-        <div style='width: 90vw; transition: 1s;' class='ampliacion'>
+      <center>
+      <h1>Información de la conexión </h1> 
+      <div style='width: 90vw; transition: 1s;' class='ampliacion'>
         <table class="styled-table">
           <thead>
           <tr><th style=' padding: 20px;'>IP Local</th><th style=' padding: 20px; '>Host Name</th><th style=' padding: 20px; '>Status</th><th style=' padding: 20px; '>SSID</th><th style=' padding: 20px; '>PSK</th><th style=' padding: 20px; '>BSSID</th><th style=' padding: 20px; '>RSSI</th></tr>

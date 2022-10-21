@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="reloj.css">
   </head>
   <body>
     <!--Titulo y conexión WiFi-->
@@ -24,39 +25,48 @@
     <!--Barra de navegación-->
     <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-left: 52px; margin-right: 52px;">
         <li class="nav-item">
-            <a class="nav-link active" href="#" target="showPage">Lámpara</a>
+            <a class="nav-link" href="index.html">Lámpara</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="pwm.html">PWM</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="sensorLDR.html">Sensor LDR</a>
+            <a class="nav-link" href="sensorLDR.html" onclick="cambiarLed('green')">Sensor LDR</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="horario.html">Horario</a>
+            <a class="nav-link active" href="#" onclick="cambiarLed('cyan')">Horario</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="sensorPIR.html">Sensor PIR</a>
+            <a class="nav-link" href="sensorPIR.html" onclick="cambiarLed('purple')">Sensor PIR</a>
         </li>
-        <img src="https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/led_colores/red_led.png" id="led_status" alt="">
+        <img src="https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/led_colores/cyan_led.png" id="led_status" alt="">
     </ul>
     <!--Contenido-->
-    <div style="display: flex; justify-content: center; align-items: center; margin: 20px 20px;">
-      <!--Encendido y apagado del foco-->
-      <div style="display: flex; align-items: center; justify-content: center;">
-          <div>
-              <center><h2>Encendido y apagado</h2></center>
-              <div style='display: inline-flex; margin: 0% 10%;'><img value=1 id='foco-imagen' src='https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_foco/intensidad5.png'  width='200px'><input id='switch-foco' type='image' src='http://esploradores.com/Practicas_html/apagar_300x88.png' style='display:block; margin:auto' width='40%' onclick="cambiarIconos('estado-foco', 'foco-imagen', 'switch-foco', 'FocoEstado')"></div>         
-              <input type="range" style='display: none;' id="estado-foco" name="estado-foco" value="0">
-          </div>
-      </div>
+    <div class="clock">
+      <div id="hour">00</div>
+      <span>:</span>
+      <div id="minute">00</div>
+      <span>:</span>
+      <div id="seconds">00</div>
+    </div>
+    <div id="contenedor_horario" style="display: inline-grid; margin-left: 45%; margin-bottom: 100px;">
+      <form action="/HORARIO" method="post">
+        <label for="horaEncendido">Hora de encendido</label><br>
+        <input type="number" id="horaEncendido" name="horaEncendido" min="0" max="23" value="18">&nbsp:
+        <input type="number" id="minutoEncendido" name="minutoEncendido" min="0" max="60" value="30">
+        <br><label for="horaApagado">Hora de apagado</label><br>
+        <input type="number" id="horaApagado" name="horaApagado" min="0" max="23" value="7">&nbsp:
+        <input type="number" id="minutoApagado" name="minutoApagado" min="0" max="59" value="30">
+        <input type="number" id="flagHorario" name="flagHorario" min="0" max="10" value="1" style="display: none;"><br>
+        <br><button id="establecerHorario" type="submit" value="Submit" onclick="horario()">Establecer horario</button>
+      </form>
     </div>
 
     <!--Tabla de información de la conexión-->
     <div>
-        <center>
-        <h1>Información de la conexión</h1> 
-        <div style='width: 90vw; transition: 1s;' class='ampliacion'>
+      <h1>Información de la conexión </h1> 
+      <center>
+      <div style='width: 90vw; transition: 1s;' class='ampliacion'>
         <table class="styled-table">
           <thead>
           <tr><th style=' padding: 20px;'>IP Local</th><th style=' padding: 20px; '>Host Name</th><th style=' padding: 20px; '>Status</th><th style=' padding: 20px; '>SSID</th><th style=' padding: 20px; '>PSK</th><th style=' padding: 20px; '>BSSID</th><th style=' padding: 20px; '>RSSI</th></tr>
@@ -100,7 +110,7 @@
     <hr>
     
     <!-- Fotitos de los integrantes y su información -->
-    <center><h2>Integrantes:</h2></center>     
+    <h2>Integrantes: </h2>     
     <div style="display: flex;">
         <!-- Yamil -->
         <div class="profile-card yamil" style="margin: 0 auto;">
@@ -137,6 +147,7 @@
     <br><br><br><br>
 
     <script src="index.js"></script>
+    <script src="reloj.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

@@ -21,13 +21,14 @@
     </header>
     <div style="height: 120px;"></div>
 
+    <!--Contenido-->
     <!--Barra de navegación-->
     <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-left: 52px; margin-right: 52px;">
         <li class="nav-item">
-            <a class="nav-link active" href="#" target="showPage">Lámpara</a>
+            <a class="nav-link" href="index.html" >Lámpara</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="pwm.html">PWM</a>
+            <a class="nav-link active" href="#">PWM</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="sensorLDR.html">Sensor LDR</a>
@@ -38,25 +39,31 @@
         <li class="nav-item">
             <a class="nav-link" href="sensorPIR.html">Sensor PIR</a>
         </li>
-        <img src="https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/led_colores/red_led.png" id="led_status" alt="">
+        <img src="https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/led_colores/yellow_led.png" id="led_status" alt="">
     </ul>
     <!--Contenido-->
-    <div style="display: flex; justify-content: center; align-items: center; margin: 20px 20px;">
-      <!--Encendido y apagado del foco-->
+    <div style="display: flex; justify-content: center; align-items: center; margin: 40px 20px;">
+      <!--Intensidad del foco con PWM-->
       <div style="display: flex; align-items: center; justify-content: center;">
-          <div>
-              <center><h2>Encendido y apagado</h2></center>
-              <div style='display: inline-flex; margin: 0% 10%;'><img value=1 id='foco-imagen' src='https://raw.githubusercontent.com/MicaelaGordillo/images_IoT/main/intensidad_foco/intensidad5.png'  width='200px'><input id='switch-foco' type='image' src='http://esploradores.com/Practicas_html/apagar_300x88.png' style='display:block; margin:auto' width='40%' onclick="cambiarIconos('estado-foco', 'foco-imagen', 'switch-foco', 'FocoEstado')"></div>         
-              <input type="range" style='display: none;' id="estado-foco" name="estado-foco" value="0">
-          </div>
+        <div>
+          <center>
+            <h2>Control de intensidad</h2>
+            <form action="/SLIDER" method="post">
+              Slider:<br>
+              <input type="range" id="pwmInput" name="pwmValue" min="0" max="1023" value="500" onchange="updateTextInput(this.value, 'pwmInput', 'textInput')" >
+              <input type="number" id="textInput" onchange="updateTextInput(this.value, 'pwmInput', 'textInput')" value="500" style="width:50px">
+              <br><button type="submit" value="Submit">Enviar</button>
+            </form>
+          </center>
+        </div>
       </div>
     </div>
 
     <!--Tabla de información de la conexión-->
     <div>
-        <center>
-        <h1>Información de la conexión</h1> 
-        <div style='width: 90vw; transition: 1s;' class='ampliacion'>
+      <center>
+      <h1>Información de la conexión </h1>
+      <div style='width: 90vw; transition: 1s;' class='ampliacion'>
         <table class="styled-table">
           <thead>
           <tr><th style=' padding: 20px;'>IP Local</th><th style=' padding: 20px; '>Host Name</th><th style=' padding: 20px; '>Status</th><th style=' padding: 20px; '>SSID</th><th style=' padding: 20px; '>PSK</th><th style=' padding: 20px; '>BSSID</th><th style=' padding: 20px; '>RSSI</th></tr>

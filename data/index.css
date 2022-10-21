@@ -59,6 +59,7 @@ header{
   width: 100vw;
   top: 0;
   display: flex;
+  z-index: 100;
 }
 header img{
   height: 100%;
@@ -214,34 +215,4 @@ table {
 .styled-table tbody tr.active-row {
   font-weight: bold;
   color: #009879;
-}
-
-/* Reloj digital */
-.clock{
-  width: 550px;
-  height: 150px;
-  margin: 50px auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.clock div{
-  position: relative;
-  background-color: #ffffff;
-  height: 100%;
-  width: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Open Sans',sans-serif;
-  font-size: 60px;
-  color: #202020;
-  border-radius: 5px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-  letter-spacing: 3px;
-}
-.clock span{
-  font-weight: bolder;
-  font-size: 60px;
-  color: #ffffff;
 }
