@@ -9,17 +9,17 @@
 //Sensor LDR
 #define ADC_VREF_mV    3300.0 // 3.3v en millivoltios
 #define ADC_RESOLUTION 4096.0
-#define LIGHT_SENSOR_PIN       36 // ESP32 pin GIOP36 (ADC0) conectado al LDR
+#define LIGHT_SENSOR_PIN       36 // ESP32 pin GIOP36 (ADC0) conectado al LDR---------------------------------------------------
 
 //Declarar componentes
 //Foco
-int foco = 22;---------------------------------------------------------------------
+int foco = 22; //---------------------------------------------------------------------
 //Led
-int led = 21;======================================================================
+int led = 21; //======================================================================
 int estadoFoco = LOW; //Para guardar el estado del Foco
 //Sensor LDR
 int datoADC;
-int auxLDR;
+bool auxLDR = false;
 float porcentaje=0.0;
 float factor=100.0/ADC_RESOLUTION;
 
@@ -35,6 +35,13 @@ AsyncWebServer server(80);
 //Horario
 String hEncendido, mEncendido, hApagado, mApagado, aux;
 bool flagHorario = false;
+
+//Sensor PIR
+const int PIN_TO_SENSOR = 19; // GIOP19 pin conectado al sensor ============--------------------------------------
+int pinStateCurrent   = LOW;  // estado actual
+int pinStatePrevious  = LOW;  // estado previo
+bool auxPIR = false;
+int datoPIR;
 
 String getRSSI(){
   return String(WiFi.RSSI());
@@ -66,6 +73,9 @@ String processor(const String& var){
 
 //Para el sensor LDR
 boolean flag_mode=true;
+
+//Para el sensor PIR
+boolean flag_mode1=true;
 
 void setup(){
   // Serial port for debugging purposes
@@ -133,10 +143,11 @@ void setup(){
   server.on("/EstadoSensorLDR0", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Sensor LDR: Desactivado\t");
     ledcWrite(PWM1_Ch, 0);
+    auxLDR = false;
   });
   server.on("/EstadoSensorLDR1", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Sensor LDR: Activado\t");
-    ledcWrite(PWM1_Ch, auxLDR);
+    auxLDR = true;
   });
   server.on("/SensorLDR", HTTP_GET, [](AsyncWebServerRequest *request){
     if(flag_mode){request->send_P(200, "text/plain", String(datoADC).c_str());}
@@ -160,7 +171,23 @@ void setup(){
     Serial.print(":");
     Serial.println(mApagado);
   });
- 
+
+  // Quinta pestaña
+  // Sensor PIR
+  pinMode(PIN_TO_SENSOR, INPUT); // Configurando el pin como entrada
+  server.on("/EstadoSensorPIR0", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.println("Sensor PIR: Desactivado\t");
+    ledcWrite(PWM1_Ch, 0);
+    auxPIR = false;
+  });
+  server.on("/EstadoSensorPIR1", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.println("Sensor PIR: Activado\t");
+    auxPIR = true;
+  });
+  server.on("/SensorPIR", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(flag_mode1){request->send_P(200, "text/plain", String(datoPIR).c_str());}
+  });
+  
   // Start server
   server.begin();
 }
@@ -170,25 +197,42 @@ void loop(){
   // lectura del dato analogico (valor entre 0 y 4095)
   datoADC = analogRead(LIGHT_SENSOR_PIN);
   porcentaje=factor*datoADC;
-  Serial.print("Valor Analogico = ");
-  Serial.print(datoADC);   
-  Serial.print("  Porcentaje = ");
-  Serial.print(porcentaje);  
-  if (datoADC < 40) {
-    Serial.println("%  => Oscuro");
-    auxLDR = 1023;
-  } else if (datoADC < 800) {
-    Serial.println("% => Tenue");
-    auxLDR = 765;
-  } else if (datoADC < 2000) {
-    Serial.println("% => Claro");
-    auxLDR = 510;
-  } else if (datoADC < 3200) {
-    Serial.println("% => Luminoso");
-    auxLDR = 255;
-  } else {
-    Serial.println("% => Muy Luminoso");
-    auxLDR = 0;
+  if (auxLDR == true){
+    Serial.print("Valor Analogico = ");
+    Serial.print(datoADC);   
+    Serial.print("  Porcentaje = ");
+    Serial.print(porcentaje);  
+    if (datoADC < 40) {
+      Serial.println("%  => Oscuro");
+      ledcWrite(PWM1_Ch, 1023);
+    } else if (datoADC < 800) {
+      Serial.println("% => Tenue");
+      ledcWrite(PWM1_Ch, 765);
+    } else if (datoADC < 2000) {
+      Serial.println("% => Claro");
+      ledcWrite(PWM1_Ch, 510);
+    } else if (datoADC < 3200) {
+      Serial.println("% => Luminoso");
+      ledcWrite(PWM1_Ch, 255);
+    } else {
+      Serial.println("% => Muy Luminoso");
+      ledcWrite(PWM1_Ch, 0);
+    } 
   }
-  delay(1000);
+  // Sensor PIR - Lectura de datos
+  pinStatePrevious = pinStateCurrent;             // salvando el estado anteorior
+  pinStateCurrent = digitalRead(PIN_TO_SENSOR);   // leyendo el estado nuevo
+  datoPIR = analogRead(PIN_TO_SENSOR);
+  if(auxPIR == true){
+    Serial.print("RIP: ");
+    Serial.println(datoPIR);
+    if (pinStatePrevious == LOW && pinStateCurrent == HIGH) {   // Cambio de estado del pin: LOW -> HIGH
+      Serial.println("Movimiento detectado!");
+      ledcWrite(PWM1_Ch, 1023);
+    } else if (pinStatePrevious == HIGH && pinStateCurrent == LOW) {   // Cambio de estadi del pin: HIGH -> LOW
+      Serial.println("Sin movimiento!");
+      ledcWrite(PWM1_Ch, 0);
+    }
+  }
+  delay(100);
 }
