@@ -1,5 +1,5 @@
-const char* ssid = "Nao";        //Indicamos el nombre de la red WiFi (SSID) a la que queremos conectarnos.
-const char* password =  "taebonito21";    //Indicamos la contraseña de de red WiFi
+const char* ssid = "AXS_2.4G_b6qGEE";        //Indicamos el nombre de la red WiFi (SSID) a la que queremos conectarnos.
+const char* password =  "PhGqXGhY";    //Indicamos la contraseña de de red WiFi
 
 /*
 const char* ssid = "xxxxxx";        //Indicamos el nombre de la red WiFi (SSID) a la que queremos conectarnos.

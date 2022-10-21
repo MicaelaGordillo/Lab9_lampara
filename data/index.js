@@ -25,15 +25,6 @@ setInterval(function ( ) {
     xhttp.send();
 }, 10000);
 
-apagarFoco(); /*Llama a la función apagarFoco()*/
-
-/*Funcion para apagar el foco*/
-function apagarFoco (){
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "/FocoEstado0", true);
-    xhttp.send();
-}
-
 /*Primera pestaña*/
 /*Funcion que permite cambiar los iconos*/
 function cambiarIconos(idValor, idImagen, idSwitch, ruta){

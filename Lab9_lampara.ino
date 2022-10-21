@@ -18,7 +18,6 @@ int foco = 22;
 int led = 21;
 int estadoFoco = LOW; //Para guardar el estado del Foco
 //Sensor LDR
-boolean flagLDR = false;
 int datoADC;
 float porcentaje=0.0;
 float factor=100.0/ADC_RESOLUTION;
@@ -65,6 +64,8 @@ String processor(const String& var){
     }
 }
 
+//Para el sensor LDR
+boolean flag_mode=true;
 
 void setup(){
   // Serial port for debugging purposes
@@ -109,13 +110,11 @@ void setup(){
   //Primera pestaña
   //Encendido y apagado
   server.on("/FocoEstado0", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.print("Estado foco: apagado\t");
-    //ledcWrite(PWM1_Ch, 0);
+    Serial.println("Estado foco: apagado\t");
     digitalWrite(foco, LOW);
   });
   server.on("/FocoEstado1", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Estado foco: encendido\t");
-    //ledcWrite(PWM1_Ch, 1023);
     digitalWrite(foco, HIGH);
   });
 
@@ -125,19 +124,22 @@ void setup(){
     pwmValue = request->arg("pwmValue");
     Serial.print("PWM:\t");
     Serial.println(pwmValue);
-    request->redirect("/");
+    request->redirect("/pwm.html");
     ledcWrite(PWM1_Ch, pwmValue.toInt());
   });
   
   //Tercera pestaña
   //Sensor LDR
   server.on("/EstadoSensorLDR0", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.print("Sensor LDR: Activado\t");
-    flagLDR = true;
+    Serial.println("Sensor LDR: Activado\t");
+    ledcWrite(PWM1_Ch, 0);
   });
   server.on("/EstadoSensorLDR1", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Sensor LDR: Activado\t");
-    flagLDR = false;
+    ledcWrite(PWM1_Ch, datoADC+20);
+  });
+  server.on("/SensorLDR", HTTP_GET, [](AsyncWebServerRequest *request){
+    if(flag_mode){request->send_P(200, "text/plain", String(datoADC).c_str());}
   });
 
   //Cuarta pestaña
@@ -149,62 +151,39 @@ void setup(){
     mApagado = request->arg("minutoApagado");
     aux = request->arg("auxHorario");
     Serial.print("Hora encendido ->");
-    Serial print(hEncendido);
+    Serial.print(hEncendido);
     Serial.print(":");
     Serial.print(mEncendido);
     Serial.print("\t");
     Serial.print("Hora apagado ->");
-    Serial print(hApagado);
+    Serial.print(hApagado);
     Serial.print(":");
     Serial.println(mApagado);
-    request->redirect("/");
-    if(aux.toInt() == 0){
-      flagHorario = false;    
-    } else {
-      flagHorario = true;
-    }
   });
  
   // Start server
   server.begin();
 }
 
-
 void loop(){
-  if(flagLDR){
-    // lectura del dato analogico (valor entre 0 y 4095)
-    datoADC = analogRead(LIGHT_SENSOR_PIN);
-    porcentaje=factor*datoADC;
-    Serial.print("Valor Analogico = ");
-    Serial.print(datoADC);   
-    Serial.print("  Porcentaje = ");
-    Serial.print(porcentaje);  
-    if (datoADC < 40) {
-      Serial.println("%  => Oscuro");
-      ledcWrite(PWM1_Ch, 1023);
-    } else if (datoADC < 800) {
-      Serial.println("% => Tenue");
-      ledcWrite(PWM1_Ch, 768);
-    } else if (datoADC < 2000) {
-      Serial.println("% => Claro");
-      ledcWrite(PWM1_Ch, 512);
-    } else if (datoADC < 3200) {
-      Serial.println("% => Luminoso");
-      ledcWrite(PWM1_Ch, 256);
-    } else {
-      Serial.println("% => Muy Luminoso");
-      ledcWrite(PWM1_Ch, 0);
-    }
-    delay(500);
-  } else if (flagHorario){
-    if(hour()){
-      if(minute()){
-        
-      } else {
-        
-      }
-    } else {
-      
-    }
+  // Sensor LDR - Lectura de datos
+  // lectura del dato analogico (valor entre 0 y 4095)
+  datoADC = analogRead(LIGHT_SENSOR_PIN);
+  porcentaje=factor*datoADC;
+  Serial.print("Valor Analogico = ");
+  Serial.print(datoADC);   
+  Serial.print("  Porcentaje = ");
+  Serial.print(porcentaje);  
+  if (datoADC < 40) {
+    Serial.println("%  => Oscuro");
+  } else if (datoADC < 800) {
+    Serial.println("% => Tenue");
+  } else if (datoADC < 2000) {
+    Serial.println("% => Claro");
+  } else if (datoADC < 3200) {
+    Serial.println("% => Luminoso");
+  } else {
+    Serial.println("% => Muy Luminoso");
   }
+  delay(1000);
 }
