@@ -13,12 +13,13 @@
 
 //Declarar componentes
 //Foco
-int foco = 22;
+int foco = 22;---------------------------------------------------------------------
 //Led
-int led = 21;
+int led = 21;======================================================================
 int estadoFoco = LOW; //Para guardar el estado del Foco
 //Sensor LDR
 int datoADC;
+int auxLDR;
 float porcentaje=0.0;
 float factor=100.0/ADC_RESOLUTION;
 
@@ -34,7 +35,6 @@ AsyncWebServer server(80);
 //Horario
 String hEncendido, mEncendido, hApagado, mApagado, aux;
 bool flagHorario = false;
-
 
 String getRSSI(){
   return String(WiFi.RSSI());
@@ -131,12 +131,12 @@ void setup(){
   //Tercera pestaña
   //Sensor LDR
   server.on("/EstadoSensorLDR0", HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("Sensor LDR: Activado\t");
+    Serial.println("Sensor LDR: Desactivado\t");
     ledcWrite(PWM1_Ch, 0);
   });
   server.on("/EstadoSensorLDR1", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("Sensor LDR: Activado\t");
-    ledcWrite(PWM1_Ch, datoADC+20);
+    ledcWrite(PWM1_Ch, auxLDR);
   });
   server.on("/SensorLDR", HTTP_GET, [](AsyncWebServerRequest *request){
     if(flag_mode){request->send_P(200, "text/plain", String(datoADC).c_str());}
@@ -176,14 +176,19 @@ void loop(){
   Serial.print(porcentaje);  
   if (datoADC < 40) {
     Serial.println("%  => Oscuro");
+    auxLDR = 1023;
   } else if (datoADC < 800) {
     Serial.println("% => Tenue");
+    auxLDR = 765;
   } else if (datoADC < 2000) {
     Serial.println("% => Claro");
+    auxLDR = 510;
   } else if (datoADC < 3200) {
     Serial.println("% => Luminoso");
+    auxLDR = 255;
   } else {
     Serial.println("% => Muy Luminoso");
+    auxLDR = 0;
   }
   delay(1000);
 }
