@@ -48,17 +48,18 @@
       <span>:</span>
       <div id="seconds">00</div>
     </div>
-    <div id="contenedor_horario" style="display: inline-grid; margin-left: 45%; margin-bottom: 100px;">
-      <form>
+    <div id="contenedor_horario" style="margin-left: 45%; margin-bottom: 100px; align-items: center;">
+      
         <label for="horaEncendido">Hora de encendido</label><br>
         <input type="number" id="horaEncendido" name="horaEncendido" min="0" max="23" value="18">&nbsp:
         <input type="number" id="minutoEncendido" name="minutoEncendido" min="0" max="60" value="30">
         <br><label for="horaApagado">Hora de apagado</label><br>
         <input type="number" id="horaApagado" name="horaApagado" min="0" max="23" value="7">&nbsp:
         <input type="number" id="minutoApagado" name="minutoApagado" min="0" max="59" value="30">
-        <input type="number" id="flagHorario" name="flagHorario" min="0" max="10" value="1" style="display: none;"><br>
-        <br><button id="establecerHorario" value="Submit" onclick="horario()">Establecer horario</button>
-      </form>
+        <br>
+        <br>
+        <button id="establecerHorario" onclick="horario()">Establecer horario</button>
+      
     </div>
 
     <!--Tabla de información de la conexión-->

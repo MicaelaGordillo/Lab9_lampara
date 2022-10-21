@@ -52,7 +52,9 @@ function horario() {
       0,
       0
     ) - tiempoActual;
-
+    console.log(milis1);
+    console.log(milis2);
+    
   if (milis1 < 0) {
     milis1 += 86400000; //Si la hora establecida de inicio ya pasó, se aplica desde el siguiente dia (86400000 = 24h)
   }
@@ -68,11 +70,16 @@ function horario() {
     var xhttp = new XMLHttpRequest();
     xhttp.open("PUT", "/FocoEstado1", true);
     xhttp.send();
+    console.log("temp1");
   }, milis1);
-  
+
   setInterval(function () {
     var xhttp = new XMLHttpRequest();
     xhttp.open("PUT", "/FocoEstado0", true);
     xhttp.send();
+    console.log("temp2");
   }, milis2);
+
+  console.log("Se establecieron los temporizadores");
+  alert(`Se estableció el horario correctamente :D\nEncendido: ${h1}:${m1}\nApagado: ${h2}:${m2}`);
 }
