@@ -23,6 +23,8 @@ var clock = setInterval(function time() {
   seconds.textContent = sec;
 }, 1000);
 
+var aux1 = 0;
+var aux2 = 0;
 function horario() {
   // Recolectamos datos
   var h1 = document.getElementById("horaEncendido").value;
@@ -61,23 +63,28 @@ function horario() {
   if (milis2 < 0) {
     milis2 = 86400000; //Si la hora establecida de apagdo ya pasó, se aplica desde el siguiente dia (86400000 = 24h)
   }
-  if (milis1 < milis2) {
-    milis2 += 86400000;
-  }
+ 
 
   //Establecemos los temporizadores para mandar señales al ESP32 en el momento en el que el foco deba cambiar de estado
   setInterval(function () {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("PUT", "/FocoEstado1", true);
-    xhttp.send();
-    console.log("temp1");
+    if(aux1=0){
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "/FocoEstado1", true);
+      xhttp.send();
+      console.log("temp1");
+    }
+    aux1++;
   }, milis1);
+  
 
   setInterval(function () {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("PUT", "/FocoEstado0", true);
-    xhttp.send();
-    console.log("temp2");
+    if(aux2==0){
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "/FocoEstado0", true);
+      xhttp.send();
+      console.log("temp2");
+    }
+    aux2++;
   }, milis2);
 
   console.log("Se establecieron los temporizadores");
