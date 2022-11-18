@@ -9,13 +9,13 @@
 //Sensor LDR
 #define ADC_VREF_mV    3300.0 // 3.3v en millivoltios
 #define ADC_RESOLUTION 4096.0
-#define LIGHT_SENSOR_PIN       36 // ESP32 pin GIOP36 (ADC0) conectado al LDR---------------------------------------------------
+#define LIGHT_SENSOR_PIN       36 // ESP32 pin GIOP36 (ADC0) conectado al LDR
 
 //Declarar componentes
 //Foco
-int foco = 22; //---------------------------------------------------------------------
+int foco = 32;
 //Led
-int led = 21; //======================================================================
+int led = 33;
 int estadoFoco = LOW; //Para guardar el estado del Foco
 //Sensor LDR
 int datoADC;
@@ -29,6 +29,7 @@ float factor=100.0/ADC_RESOLUTION;
 #define PWM1_Freq  1000
 
 String pwmValue;
+String pwmValue2;
 
 AsyncWebServer server(80);
 
@@ -37,7 +38,7 @@ String hEncendido, mEncendido, hApagado, mApagado, aux;
 bool flagHorario = false;
 
 //Sensor PIR
-const int PIN_TO_SENSOR = 19; // GIOP19 pin conectado al sensor ============--------------------------------------
+const int PIN_TO_SENSOR = 19; // GIOP19 pin conectado al sensor
 int pinStateCurrent   = LOW;  // estado actual
 int pinStatePrevious  = LOW;  // estado previo
 bool auxPIR = false;
@@ -45,30 +46,6 @@ int datoPIR;
 
 String getRSSI(){
   return String(WiFi.RSSI());
-}
-String processor(const String& var){
-    Serial.print(var+" : ");
-    if (var == "IP"){
-      return String(WiFi.localIP().toString().c_str());
-    }
-    else if (var == "HOSTNAME"){
-      return String(WiFi.getHostname());
-    }
-    else if (var == "STATUS"){
-      return String(WiFi.status());
-    }
-    else if (var == "SSID"){
-      return String(WiFi.SSID().c_str());
-    }
-    else if (var == "PSK"){
-      return String(WiFi.psk().c_str());
-    }
-    else if (var == "BSSID"){
-      return String(WiFi.BSSIDstr().c_str());
-    }
-    else if (var == "RSSI"){
-      return String(WiFi.RSSI());
-    }
 }
 
 //Para el sensor LDR
@@ -97,17 +74,35 @@ void setup(){
   
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html",String(), false, processor);
+    request->send(SPIFFS, "/index.html",String(), false);
   });
   server.on("/index.css", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.css", "text/css");
   });
 
   server.serveStatic("/", SPIFFS, "/");
-  
-  // Ruta para poner el GPIO alto
+
+  //Rutas tabla de valores
+  server.on("/IP", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", String(WiFi.localIP()).c_str());
+  });
+  server.on("/HOSTNAME", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", String(WiFi.getHostname()).c_str());
+  });
+  server.on("/STATUS", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", String(WiFi.status()).c_str());
+  });
+  server.on("/SSID", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", String(WiFi.SSID()).c_str());
+  });
+  server.on("/PSK", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", String(WiFi.psk()).c_str());
+  });
+  server.on("/BSSID", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", String(WiFi.BSSIDstr()).c_str());
+  });
   server.on("/RSSI", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/plain",getRSSI().c_str());
+    request->send_P(200, "text/plain", String(WiFi.RSSI()).c_str());
   });
 
   //Definimos el foco como salida
@@ -186,6 +181,12 @@ void setup(){
   });
   server.on("/SensorPIR", HTTP_GET, [](AsyncWebServerRequest *request){
     if(flag_mode1){request->send_P(200, "text/plain", String(datoPIR).c_str());}
+  });
+  server.on("/SLIDER2", HTTP_POST, [](AsyncWebServerRequest *request){
+    pwmValue2 = request->arg("pwmValue2");
+    Serial.print("Slider 2:\t");
+    Serial.println(pwmValue2);
+    request->redirect("/sensorPIR.html");
   });
   
   // Start server

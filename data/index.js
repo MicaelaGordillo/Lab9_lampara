@@ -16,6 +16,66 @@ setInterval(function ( ) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("valorIP").innerText = this.responseText;
+        }
+    };
+    xhttp.open("GET", "/IP", true);
+    xhttp.send();
+}, 10000);
+setInterval(function ( ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("valorHOSTNAME").innerText = this.responseText;
+        }
+    };
+    xhttp.open("GET", "/HOSTNAME", true);
+    xhttp.send();
+}, 10000);
+setInterval(function ( ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("valorSTATUS").innerText = this.responseText;
+        }
+    };
+    xhttp.open("GET", "/STATUS", true);
+    xhttp.send();
+}, 10000);
+setInterval(function ( ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("valorSSID").innerText = this.responseText;
+        }
+    };
+    xhttp.open("GET", "/SSID", true);
+    xhttp.send();
+}, 10000);
+setInterval(function ( ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("valorPSK").innerText = this.responseText;
+        }
+    };
+    xhttp.open("GET", "/PSK", true);
+    xhttp.send();
+}, 10000);
+setInterval(function ( ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("valorBSSID").innerText = this.responseText;
+        }
+    };
+    xhttp.open("GET", "/BSSID", true);
+    xhttp.send();
+}, 10000);
+setInterval(function ( ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
             document.getElementById("valorPotencia").innerText = this.responseText;
             document.getElementById("valorRSSI").innerText = this.responseText;
             actualizarPotencia();
@@ -23,6 +83,19 @@ setInterval(function ( ) {
     };
     xhttp.open("GET", "/RSSI", true);
     xhttp.send();
+}, 10000);
+//Función para pedir el valor de la conexión WiFi - cada 10 segundos/
+setInterval(function ( ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("valorPotencia").innerText = this.responseText;
+        document.getElementById("valorRSSI").innerText = this.responseText;
+        actualizarPotencia();
+    }
+};
+xhttp.open("GET", "/RSSI", true);
+xhttp.send();
 }, 10000);
 
 /*Primera pestaña*/
