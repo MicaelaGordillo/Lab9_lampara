@@ -67,7 +67,7 @@ function horario() {
 
   //Establecemos los temporizadores para mandar señales al ESP32 en el momento en el que el foco deba cambiar de estado
   setInterval(function () {
-    if(aux1=0){
+    if(aux1==0){
       var xhttp = new XMLHttpRequest();
       xhttp.open("GET", "/FocoEstado1", true);
       xhttp.send();
